@@ -1,20 +1,18 @@
-from apns import APNs, Payload
+from .handler import Handler
+from config import cert_file, key_file
 
-# Path to your APNs certificate and key files
-cert_file = 'path_to_your_certificate.pem'
-key_file = 'path_to_your_key.pem'
-class PushHa:
-    def __init__(self):
+# from apns import APNs, Payload
 
-apns = APNs(use_sandbox=True, cert_file=cert_file, key_file=key_file)
 
-# Device token obtained from the iOS app
-device_token = 'device_token'
-
-# Notification payload
-payload = Payload(alert='Test Notification', sound='default', badge=1)
-
-# Send the notification
-apns.gateway_server.send_notification(device_token, payload)
-
-print('Notification sent successfully to APNs')
+class PushHandler(Handler):  # recipient - device token
+    def handle(self, request):
+        if 'push' not in request.delivery_methods:
+            return super().handle(request)
+        return super().handle(request)
+        # recipient = request.recipient
+        # text = request.message
+        # apns = APNs(use_sandbox=True, cert_file=cert_file, key_file=key_file)
+        #
+        # payload = Payload(alert=text, sound='default', badge=1)
+        #
+        # apns.gateway_server.send_notification(recipient, payload)

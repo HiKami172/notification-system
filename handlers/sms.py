@@ -1,17 +1,22 @@
+from .handler import Handler
+from config import account_sid, auth_token, phone_number
+
 from twilio.rest import Client
 
 
-class SMS:
-    def __init__(self, account_sid, auth_token, sender):
-        self.account_sid = account_sid
-        self.auth_token = auth_token
-        self.sender = sender
-        self.client = Client(account_sid, auth_token)
+class SMSHandler(Handler):  # recipient - phone number
 
-    def send(self, recipient, text):
-        message = self.client.messages.create(
+    def handle(self, request):
+        if 'sms' not in request.delivery_methods:
+            return super().handle(request)
+        recipient = request.recipient
+        text = request.message
+
+        client = Client(account_sid, auth_token)
+        message = client.messages.create(
             body=text,
-            from_=self.sender,
+            from_=phone_number,
             to=recipient
         )
+        return super().handle(request)
 

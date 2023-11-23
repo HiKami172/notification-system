@@ -4,7 +4,7 @@ class Handler:
 
     def set_next(self, handler):
         self.next_handler = handler
-        return handler
+        return self
 
     def handle(self, request):
         if self.next_handler:
