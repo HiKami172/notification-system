@@ -1,18 +1,24 @@
 from .handler import Handler
-from config import cert_file, key_file
+from config import PUSHPAD_AUTH_TOKEN, PUSHPAD_PROJECT_ID
 
-# from apns import APNs, Payload
+import pushpad
 
 
-class PushHandler(Handler):  # recipient - device token
+class PushHandler(Handler):  # recipient - website url
     def handle(self, request):
         if 'push' not in request.delivery_methods:
             return super().handle(request)
+        recipient = request.delivery_methods['push']
+        text = request.message
+        project = pushpad.Pushpad(
+            auth_token=PUSHPAD_AUTH_TOKEN,
+            project_id=PUSHPAD_PROJECT_ID
+        )
+        notification = pushpad.Notification(
+            project,
+            body=text,
+            target_url=recipient,
+        )
+
+        notification.broadcast()
         return super().handle(request)
-        # recipient = request.recipient
-        # text = request.message
-        # apns = APNs(use_sandbox=True, cert_file=cert_file, key_file=key_file)
-        #
-        # payload = Payload(alert=text, sound='default', badge=1)
-        #
-        # apns.gateway_server.send_notification(recipient, payload)
