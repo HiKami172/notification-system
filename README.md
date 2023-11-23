@@ -1,6 +1,11 @@
 # notification-system
 Notification system python implementation. Example patterns usage.
 
+## Implemented patterns:
+- Builder (for notification building)
+- State (for notification state transitions)
+- Chain of Responsibility (for chain of delivery methods)
+
 ## Install
 
 Clone repository
