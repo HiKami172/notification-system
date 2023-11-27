@@ -1,11 +1,13 @@
-from states import PendingState
+from states import State, PendingState
+from dataclasses import dataclass, field
 
 
+@dataclass()
 class Notification:
-    def __init__(self):
-        self.message = None
-        self.delivery_methods = {}
-        self.state = PendingState()
+    heading: str = field(default=None)
+    body: str = field(default=None)
+    delivery_methods: dict[str, str] = field(default_factory=dict)
+    state: State = field(default_factory=PendingState)
 
     def set_state(self, state):
         self.state = state
@@ -14,12 +16,16 @@ class Notification:
         self.state.handle(self)
 
 
+@dataclass()
 class NotificationBuilder:
-    def __init__(self):
-        self.notification = Notification()
+    notification: Notification = field(default_factory=Notification)
 
-    def set_message(self, message):
-        self.notification.message = message
+    def set_heading(self, text):
+        self.notification.heading = text
+        return self
+
+    def set_body(self, text):
+        self.notification.body = text
         return self
 
     def set_delivery_method(self, delivery_type, address):
