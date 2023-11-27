@@ -1,4 +1,4 @@
-from config import sender_email, email_password
+import keys
 from .handler import Handler
 
 import smtplib
@@ -12,15 +12,14 @@ class EmailHandler(Handler):  # recipient - email
         if 'email' not in request.delivery_methods:
             return super().handle(request)
         recipient = request.delivery_methods['email']
-        text = request.message
         message = MIMEMultipart()
-        message['From'] = sender_email
+        message['From'] = keys.sender_email
         message['To'] = recipient
-        message['Subject'] = 'Notification System'
-        message.attach(MIMEText(text, 'plain'))
+        message['Subject'] = request.heading
+        message.attach(MIMEText(request.body, 'plain'))
 
         with smtplib.SMTP('smtp.gmail.com', 587) as server:
             server.starttls()
-            server.login(sender_email, email_password)
-            server.sendmail(sender_email, recipient, message.as_string())
+            server.login(keys.sender_email, keys.email_password)
+            server.sendmail(keys.sender_email, recipient, message.as_string())
         return super().handle(request)
