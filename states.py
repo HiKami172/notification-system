@@ -9,23 +9,30 @@ class State:
 
 class PendingState(State):
     def handle(self, notification):
-        print(f"Message pending...\n"
+        print(f"Notification pending...\n"
               f"Delivery methods: {notification.delivery_methods}")
         handler = email.EmailHandler().set_next(sms.SMSHandler().set_next(push.PushHandler()))
         try:
             handler.handle(notification)
-        except:
+            notification.set_state(DeliveredState())
+        except Exception as e:
+            print(e)
             notification.set_state(FailedState())
-        notification.set_state(DeliveredState())
+        notification.handle()
 
 
 class DeliveredState(State):
     def handle(self, notification):
-        print("Message successfully delivered.")
+        print("Notification successfully delivered.")
 
 
 class FailedState(State):
+    def __init__(self, e: Exception):
+        self.e = e
+
     def handle(self, notification):
-        print("Error while delivering message.\n"
-              "Retrying...")
+        print("Encountered error while delivering notification.\n"
+              f"{self.e}\n"
+              f"Retrying...")
         notification.set_state(PendingState())
+        notification.handle()
