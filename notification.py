@@ -12,7 +12,7 @@ class Notification:
     def set_state(self, state):
         self.state = state
 
-    def handle_request(self):
+    def handle(self):
         self.state.handle(self)
 
 
@@ -28,7 +28,7 @@ class NotificationBuilder:
         self.notification.body = text
         return self
 
-    def set_delivery_method(self, delivery_type, address):
+    def add_delivery_method(self, delivery_type, address):
         self.notification.delivery_methods[delivery_type] = address
         return self
 
